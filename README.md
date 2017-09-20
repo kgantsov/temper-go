@@ -29,7 +29,7 @@ After the package is installed it can be used in go like this:
     	temp, err := temper.GetTemperature()
 
     	if err == nil {
-    		log.Printf("Temperature: %.2fK %.2fF %.2fC\n", temp+273.15, 9.0/5.0*temp+32, temp)
+    		log.Printf("Temperature: %.2f°K %.2f°F %.2f°C\n", temp+273.15, 9.0/5.0*temp+32, temp)
     	} else {
     		log.Fatalf("Failed: %s", err)
     	}
@@ -48,7 +48,7 @@ You can easily build and use them to check current temperature of log it
 Now you can run the `./temper` and you should see similar to this result:
 
     vagrant@temper:~/golang/src/github.com/kgantsov/temper-go/cmd/temper$ sudo ./temper
-    2017/09/18 19:11:38 Temperature: 292.84K 67.44F 19.69C
+    2017/09/20 15:58:22 Temperature: 293.27°K 68.22°F 20.12°C
 
 
     cd cmd/tem-logger
@@ -57,36 +57,15 @@ Now you can run the `./temper` and you should see similar to this result:
 Now you can run the `./temp-logger` and you should see similar to this result:
 
     vagrant@temper:~/golang/src/github.com/kgantsov/temper-go/cmd/temp-logger$ sudo ./temp-logger
-    2017/09/18 19:13:34 Temperature: 292.84K 67.44F 19.69C
-    2017/09/18 19:13:35 Temperature: 292.84K 67.44F 19.69C
-    2017/09/18 19:13:35 Temperature: 292.84K 67.44F 19.69C
-    2017/09/18 19:13:35 Temperature: 292.84K 67.44F 19.69C
-    2017/09/18 19:13:35 Temperature: 292.84K 67.44F 19.69C
-    2017/09/18 19:13:35 Temperature: 292.84K 67.44F 19.69C
-    2017/09/18 19:13:35 Temperature: 293.27K 68.22F 20.12C
-    2017/09/18 19:13:35 Temperature: 293.27K 68.22F 20.12C
-    2017/09/18 19:13:36 Temperature: 293.46K 68.56F 20.31C
-    2017/09/18 19:13:36 Temperature: 293.46K 68.56F 20.31C
-    2017/09/18 19:13:36 Temperature: 293.59K 68.79F 20.44C
-    2017/09/18 19:13:36 Temperature: 293.59K 68.79F 20.44C
-    2017/09/18 19:13:36 Temperature: 293.84K 69.24F 20.69C
-    2017/09/18 19:13:36 Temperature: 293.84K 69.24F 20.69C
-    2017/09/18 19:13:36 Temperature: 293.84K 69.24F 20.69C
-    2017/09/18 19:13:36 Temperature: 294.09K 69.69F 20.94C
-    2017/09/18 19:13:37 Temperature: 294.09K 69.69F 20.94C
-    2017/09/18 19:13:37 Temperature: 294.09K 69.69F 20.94C
-    2017/09/18 19:13:37 Temperature: 294.09K 69.69F 20.94C
-    2017/09/18 19:13:37 Temperature: 294.40K 70.25F 21.25C
-    2017/09/18 19:13:37 Temperature: 294.40K 70.25F 21.25C
-    2017/09/18 19:13:37 Temperature: 294.40K 70.25F 21.25C
-    2017/09/18 19:13:37 Temperature: 294.52K 70.47F 21.38C
-    2017/09/18 19:13:37 Temperature: 294.52K 70.47F 21.38C
-    2017/09/18 19:13:38 Temperature: 294.71K 70.81F 21.56C
-    2017/09/18 19:13:38 Temperature: 294.71K 70.81F 21.56C
-    2017/09/18 19:13:38 Temperature: 294.77K 70.93F 21.62C
-    2017/09/18 19:13:38 Temperature: 294.77K 70.93F 21.62C
-    2017/09/18 19:13:38 Temperature: 294.84K 71.04F 21.69C
-    2017/09/18 19:13:38 Temperature: 294.84K 71.04F 21.69C
-    2017/09/18 19:13:38 Temperature: 294.84K 71.04F 21.69C
+    2017/09/20 16:00:31 Temperature: 297.09°K 75.09°F 23.94°C
+    2017/09/20 16:00:32 Temperature: 296.96°K 74.86°F 23.81°C
+    2017/09/20 16:00:33 Temperature: 296.90°K 74.75°F 23.75°C
+    2017/09/20 16:00:34 Temperature: 296.90°K 74.75°F 23.75°C
+    2017/09/20 16:00:35 Temperature: 296.84°K 74.64°F 23.69°C
+    2017/09/20 16:00:36 Temperature: 296.77°K 74.53°F 23.62°C
+    2017/09/20 16:00:37 Temperature: 296.77°K 74.53°F 23.62°C
+    2017/09/20 16:00:38 Temperature: 296.77°K 74.53°F 23.62°C
+    2017/09/20 16:00:39 Temperature: 296.71°K 74.41°F 23.56°C
+    2017/09/20 16:00:40 Temperature: 296.71°K 74.41°F 23.56°C
 
 
