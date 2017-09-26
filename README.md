@@ -2,6 +2,8 @@
 
 Small libusb/gousb-based driver to read TEMPer USB HID devices (USB ID 0c45:7401)
 
+Tested on this device https://www.amazon.com/TEMPer-USB-Thermometer-w-Alerts/dp/B002VA813U
+
 
 ### Requirements
 
