@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/kgantsov/temper-go"
 	"log"
+
+	"github.com/kgantsov/temper-go/pkg"
 )
 
 func main() {
