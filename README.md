@@ -23,18 +23,24 @@ After the package is installed it can be used in go like this:
     package main
 
     import (
-    	"github.com/kgantsov/temper-go"
-    	"log"
+        "log"
+
+        "github.com/kgantsov/temper-go/pkg"
     )
 
     func main() {
-    	temp, err := temper.GetTemperature()
+        temp, err := temper.GetTemperature()
 
-    	if err == nil {
-    		log.Printf("Temperature: %.2f°K %.2f°F %.2f°C\n", temp+273.15, 9.0/5.0*temp+32, temp)
-    	} else {
-    		log.Fatalf("Failed: %s", err)
-    	}
+        if err == nil {
+            log.Printf(
+                "Temperature: %.2f°K %.2f°F %.2f°C\n",
+                temp.Temperature+273.15,
+                9.0/5.0*temp.Temperature+32,
+                temp.Temperature,
+            )
+        } else {
+            log.Fatalf("Failed: %s", err)
+        }
     }
 
 
