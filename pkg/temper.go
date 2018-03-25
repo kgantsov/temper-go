@@ -27,13 +27,11 @@ func GetTemperature() (DeviceTemperature, error) {
 		return desc.Vendor == vid && desc.Product == pid
 	})
 
-	for _, d := range devs {
-		defer d.Close()
-	}
 	if err != nil {
 		log.Fatalf("OpenDevices(): %v", err)
 		return DeviceTemperature{}, err
 	}
+
 	if len(devs) == 0 {
 		log.Fatalf("no devices found matching VID %s and PID %s", vid, pid)
 		return DeviceTemperature{}, fmt.Errorf("no devices found matching VID %s and PID %s", vid, pid)
@@ -42,7 +40,11 @@ func GetTemperature() (DeviceTemperature, error) {
 	// Pick the first device found.
 	dev := devs[0]
 
-	return getDeviceTemperature(dev)
+	temp, err := getDeviceTemperature(dev)
+	for _, d := range devs {
+		d.Close()
+	}
+	return temp, err
 }
 
 // GetTemperatures is a function that tries to find all USB TEMPer devices on maching and read
