@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/google/gousb"
+	"github.com/kylelemons/gousb/usb"
 )
 
 type DeviceTemperature struct {
-	Device      *gousb.Device
+	Device      *usb.Device
 	Temperature float64
 }
 
@@ -16,16 +16,20 @@ type DeviceTemperature struct {
 // the current temperature from there
 // Returns temperature in Celcius and error if it occured
 func GetTemperature() (DeviceTemperature, error) {
-	ctx := gousb.NewContext()
+	ctx := usb.NewContext()
 	defer ctx.Close()
 
 	// Iterate through available Devices, finding all that match a known VID/PID.
-	vid, pid := gousb.ID(0x0c45), gousb.ID(0x7401)
-	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool {
+	vid, pid := usb.ID(0x0c45), usb.ID(0x7401)
+	devs, err := ctx.ListDevices(func(desc *usb.Descriptor) bool {
 		// this function is called for every device present.
 		// Returning true means the device should be opened.
 		return desc.Vendor == vid && desc.Product == pid
 	})
+
+	for _, d := range devs {
+		defer d.Close()
+	}
 
 	if err != nil {
 		log.Fatalf("OpenDevices(): %v", err)
@@ -41,9 +45,6 @@ func GetTemperature() (DeviceTemperature, error) {
 	dev := devs[0]
 
 	temp, err := getDeviceTemperature(dev)
-	for _, d := range devs {
-		d.Close()
-	}
 	return temp, err
 }
 
@@ -51,12 +52,12 @@ func GetTemperature() (DeviceTemperature, error) {
 // the current temperatures from all devices
 // Returns temperatures in Celcius and error if it occured
 func GetTemperatures() ([]DeviceTemperature, error) {
-	ctx := gousb.NewContext()
+	ctx := usb.NewContext()
 	defer ctx.Close()
 
 	// Iterate through available Devices, finding all that match a known VID/PID.
-	vid, pid := gousb.ID(0x0c45), gousb.ID(0x7401)
-	devs, err := ctx.OpenDevices(func(desc *gousb.DeviceDesc) bool {
+	vid, pid := usb.ID(0x0c45), usb.ID(0x7401)
+	devs, err := ctx.ListDevices(func(desc *usb.Descriptor) bool {
 		// this function is called for every device present.
 		// Returning true means the device should be opened.
 		return desc.Vendor == vid && desc.Product == pid
@@ -85,27 +86,18 @@ func GetTemperatures() ([]DeviceTemperature, error) {
 	return temperatures, nil
 }
 
-func getDeviceTemperature(dev *gousb.Device) (DeviceTemperature, error) {
+func getDeviceTemperature(dev *usb.Device) (DeviceTemperature, error) {
 	// Switch the configuration to #1.
-	cfg, err := dev.Config(1)
+	err := dev.SetConfig(1)
 	if err != nil {
 		log.Fatalf("%s.Config(1): %v", dev, err)
 		return DeviceTemperature{}, err
 	}
-	defer cfg.Close()
-
-	// In the config #1, claim interface #1 with alt setting #0.
-	intf, err := cfg.Interface(1, 0)
-	if err != nil {
-		log.Fatalf("%s.Interface(1, 0): %v", cfg, err)
-		return DeviceTemperature{}, err
-	}
-	defer intf.Close()
 
 	// In this interface open endpoint 0x82 for reading.
-	epIn, err := intf.InEndpoint(0x82)
+	epIn, err := dev.OpenEndpoint(1, 1, 0, 0x82)
 	if err != nil {
-		log.Fatalf("%s.InEndpoint(0x82): %v", intf, err)
+		log.Fatalf("%s.InEndpoint(0x82): %v", dev, err)
 		return DeviceTemperature{}, err
 	}
 
