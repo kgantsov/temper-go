@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/kylelemons/gousb/usb"
+	usb "github.com/google/gousb"
 )
 
 type DeviceTemperature struct {
@@ -21,7 +21,7 @@ func GetTemperature() (DeviceTemperature, error) {
 
 	// Iterate through available Devices, finding all that match a known VID/PID.
 	vid, pid := usb.ID(0x0c45), usb.ID(0x7401)
-	devs, err := ctx.ListDevices(func(desc *usb.Descriptor) bool {
+	devs, err := ctx.OpenDevices(func(desc *usb.DeviceDesc) bool {
 		// this function is called for every device present.
 		// Returning true means the device should be opened.
 		return desc.Vendor == vid && desc.Product == pid
@@ -44,6 +44,10 @@ func GetTemperature() (DeviceTemperature, error) {
 	// Pick the first device found.
 	dev := devs[0]
 
+	for _, d := range devs {
+		defer d.Close()
+	}
+
 	temp, err := getDeviceTemperature(dev)
 	return temp, err
 }
@@ -57,7 +61,7 @@ func GetTemperatures() ([]DeviceTemperature, error) {
 
 	// Iterate through available Devices, finding all that match a known VID/PID.
 	vid, pid := usb.ID(0x0c45), usb.ID(0x7401)
-	devs, err := ctx.ListDevices(func(desc *usb.Descriptor) bool {
+	devs, err := ctx.OpenDevices(func(desc *usb.DeviceDesc) bool {
 		// this function is called for every device present.
 		// Returning true means the device should be opened.
 		return desc.Vendor == vid && desc.Product == pid
@@ -88,16 +92,25 @@ func GetTemperatures() ([]DeviceTemperature, error) {
 
 func getDeviceTemperature(dev *usb.Device) (DeviceTemperature, error) {
 	// Switch the configuration to #1.
-	err := dev.SetConfig(1)
+	cfg, err := dev.Config(1)
 	if err != nil {
 		log.Fatalf("%s.Config(1): %v", dev, err)
 		return DeviceTemperature{}, err
 	}
+	defer cfg.Close()
+
+	// In the config #1, claim interface #1 with alt setting #0.
+	intf, err := cfg.Interface(1, 0)
+	if err != nil {
+		log.Fatalf("%s.Interface(1, 0): %v", cfg, err)
+		return DeviceTemperature{}, err
+	}
+	defer intf.Close()
 
 	// In this interface open endpoint 0x82 for reading.
-	epIn, err := dev.OpenEndpoint(1, 1, 0, 0x82)
+	epIn, err := intf.InEndpoint(0x82)
 	if err != nil {
-		log.Fatalf("%s.InEndpoint(0x82): %v", dev, err)
+		log.Fatalf("%s.InEndpoint(0x82): %v", epIn, err)
 		return DeviceTemperature{}, err
 	}
 
